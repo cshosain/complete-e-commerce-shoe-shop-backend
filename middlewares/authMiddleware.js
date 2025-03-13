@@ -1,7 +1,8 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user.model.js");
+import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 // Load environment variables from .env file
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const encodingKey = process.env.TOKEN_SECRET_KEY;
 
 async function authenticate(req, res, next) {
@@ -38,4 +39,4 @@ async function authenticate(req, res, next) {
       .json({ success: false, message: "No authorization header found!" });
   }
 }
-module.exports = authenticate;
+export default authenticate;
