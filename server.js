@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.route.js";
 import generalUserRoutes from "./routes/generalUser.route.js";
+import shoeRoutes from "./routes/shoes.route.js";
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,8 @@ app.use(cors());
 app.use("/api/generalUsers", generalUserRoutes);
 //FOR ADMIN USERS
 app.use("/api", userRoutes);
+//FOR PRODUCTS (SHOES)
+app.use("/api/shoes", shoeRoutes);
 
 app.listen(PORT, (req, res) => {
   connectDB();
