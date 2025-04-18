@@ -1,34 +1,58 @@
 import express from "express";
-import authenticate from "../middlewares/authMiddleware.js";
-
 import {
+  addToCart,
   checkEmail,
-  checkUsername,
-  deleteUser,
-  getAllUsers,
-  userLogin,
-  userProfile,
-  userSignup,
-} from "../controlers/user.controler.js";
+  deleteGeneralUser,
+  forgotPassword,
+  getAllGeneralUsers,
+  getUser,
+  getUserCart,
+  loginGeneralUser,
+  logout,
+  register,
+  removeCartItem,
+  resetPassword,
+  updateCart,
+  updateProfile,
+  verifyOTP,
+} from "../controlers/user.controller.js";
+
+import authenticate from "../middlewares/auth.admin.js";
+import { storeOrder, cancelOrder } from "../controlers/order.controller.js";
+import { isAuthenticated } from "../middlewares/auth.user.js";
 
 const router = express.Router();
 
-// Check if a username already exists
-router.get("/check-username/:username", checkUsername);
+//GET ALL USERS
+router.get("/", getAllGeneralUsers);
 
-// Check if an email already exists
-router.get("/check-email/:email", checkEmail);
+// view cart
+router.get("/cart/:id", isAuthenticated, getUserCart);
+// Add to cart(user only)
+router.post("/cart/add", isAuthenticated, addToCart);
+// update cart
+router.put("/cart/update/:userId", isAuthenticated, updateCart);
+//delete a cart item
+router.delete("/cart/remove/:userId/:cartId", isAuthenticated, removeCartItem);
 
-router.post("/signup", userSignup);
+// Store an order (user only)
+router.post("/orders/store", isAuthenticated, storeOrder);
+// Cancel an order (admin only)
+router.delete("/orders/cancel/:orderId", authenticate, cancelOrder);
 
-router.post("/login", userLogin);
+// Update User Profile BY USER
+router.put("/update-profile", isAuthenticated, updateProfile);
+// DELETE A USER BY ADMIN
+router.delete("/remove/:id", authenticate, deleteGeneralUser);
 
-router.get("/users/profile/:username", authenticate, userProfile);
-
-//get all users. this route is not protected it's just for testing purpose
-router.get("/users", getAllUsers);
-
-//This deletion is just for testing purpose.
-router.delete("/users/:id", deleteUser);
+// Authentication Routes
+router.post("/register", register);
+router.post("/register/check-email", checkEmail);
+router.post("/otp-verification", verifyOTP);
+router.post("/login", loginGeneralUser);
+router.get("/logout", isAuthenticated, logout);
+router.get("/me", isAuthenticated, getUser);
+router.post("/password/forgot", forgotPassword);
+router.put("/password/reset/:token", resetPassword);
 
 export default router;
