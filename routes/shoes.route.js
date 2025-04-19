@@ -7,9 +7,9 @@ import {
   getShoeById,
   getShoesWithFilteredAndPagination,
   updateShoe,
-} from "../controlers/shoes.coltroler.js";
-import { verifyToken } from "../middlewares/generalUser/authMiddleware.generalUser.js";
-import authenticate from "../middlewares/authMiddleware.js";
+} from "../controlers/shoes.controller.js";
+import authenticate from "../middlewares/auth.admin.js";
+import { isAuthenticated } from "../middlewares/auth.user.js";
 
 const router = express.Router();
 
@@ -23,10 +23,10 @@ router.get("/", getAllShoes);
 router.get("/:id", getShoeById);
 
 //add a shoe (admin only)
-router.post("/",authenticate, addShoe);
+router.post("/", authenticate, addShoe);
 
 // ✅ POST Route: Add a review to a specific shoe by ID (user only)
-router.post("/:id/review",verifyToken, addReview);
+router.post("/:id/review", isAuthenticated, addReview);
 
 //delete a shoe (admin only)
 router.delete("/:id", authenticate, deleteShoe);

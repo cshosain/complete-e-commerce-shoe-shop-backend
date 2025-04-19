@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
-// Load environment variables from .env file
+import User from "../models/admin.model.js";
 import dotenv from "dotenv";
 dotenv.config();
 const encodingKey = process.env.TOKEN_SECRET_KEY;
@@ -12,12 +11,10 @@ async function authenticate(req, res, next) {
     //verify the token
     try {
       const decodedToken = jwt.verify(token, encodingKey);
-      if (decodedToken && decodedToken.username == req.params.username) {
-        const username = req.params.username;
-        //const persistedUser = users.find((user) => user.username == username);
+      if (decodedToken) {
+        const { username } = decodedToken;
         const persistedUser = await User.findOne({ username });
         if (persistedUser) {
-          //   res.json({ success: true, data: persistedUser });
           // The authention is successfull
           next();
         } else {

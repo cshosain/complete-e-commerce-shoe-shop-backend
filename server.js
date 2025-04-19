@@ -2,11 +2,13 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import adminRoutes from "./routes/admin.route.js";
 import userRoutes from "./routes/user.route.js";
-import generalUserRoutes from "./routes/generalUser.route.js";
 import shoeRoutes from "./routes/shoes.route.js";
 import bkashRoutes from "./routes/payment.bkash.route.js";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import { errorMiddleware } from "./middlewares/error.js";
 
 dotenv.config(); // Load environment variables at the top
 
@@ -21,12 +23,14 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // ROUTES
-app.use("/api/generalUsers", generalUserRoutes); // General Users
-app.use("/api", userRoutes); // Admin Users
+app.use("/api/user", userRoutes); // General Users
+app.use("/api/admin", adminRoutes); // Admin Users
 app.use("/api/shoes", shoeRoutes); // Products (Shoes)
-app.use("/api", bkashRoutes); // Bkash Payment
+app.use("/api/bkash/payment", bkashRoutes); // Bkash Payment
 
 const startServer = async () => {
   try {
@@ -42,4 +46,5 @@ const startServer = async () => {
   }
 };
 
+app.use(errorMiddleware);
 startServer();

@@ -2,9 +2,8 @@ import express from "express";
 import {
   addToCart,
   checkEmail,
-  deleteGeneralUser,
   forgotPassword,
-  getAllGeneralUsers,
+  getAllUsers,
   getUser,
   getUserCart,
   loginGeneralUser,
@@ -17,33 +16,28 @@ import {
   verifyOTP,
 } from "../controlers/user.controller.js";
 
-import authenticate from "../middlewares/auth.admin.js";
-import { storeOrder, cancelOrder } from "../controlers/order.controller.js";
+import { storeOrder } from "../controlers/order.controller.js";
 import { isAuthenticated } from "../middlewares/auth.user.js";
 
 const router = express.Router();
 
 //GET ALL USERS
-router.get("/", getAllGeneralUsers);
+router.get("/", getAllUsers);
 
 // view cart
-router.get("/cart/:id", isAuthenticated, getUserCart);
+router.get("/cart", isAuthenticated, getUserCart);
 // Add to cart(user only)
 router.post("/cart/add", isAuthenticated, addToCart);
 // update cart
-router.put("/cart/update/:userId", isAuthenticated, updateCart);
+router.put("/cart/update", isAuthenticated, updateCart);
 //delete a cart item
-router.delete("/cart/remove/:userId/:cartId", isAuthenticated, removeCartItem);
+router.delete("/cart/remove/:cartId", isAuthenticated, removeCartItem);
 
 // Store an order (user only)
 router.post("/orders/store", isAuthenticated, storeOrder);
-// Cancel an order (admin only)
-router.delete("/orders/cancel/:orderId", authenticate, cancelOrder);
 
 // Update User Profile BY USER
 router.put("/update-profile", isAuthenticated, updateProfile);
-// DELETE A USER BY ADMIN
-router.delete("/remove/:id", authenticate, deleteGeneralUser);
 
 // Authentication Routes
 router.post("/register", register);

@@ -1,15 +1,14 @@
 import Order from "../models/order.model.js";
-import GeneralUser from "../models/generalUser.model.js"; // Import GeneralUser model
+import User from "../models/user.model.js"; // Import User model
 
 // Store an order
 export const storeOrder = async (req, res) => {
   try {
     const { items, totalAmount, shippingInformation, status, paymentMethod } =
       req.body;
-    const userId = req.user.id; // Assuming `verifyToken` middleware adds `user` to `req`
-    console.log(req.body);
+    const { _id } = req.user; // Extract user ID from the request
     const newOrder = new Order({
-      userId,
+      userId: _id, // Use the user ID from the request
       items,
       shippingInformation,
       status: status || "Pending", // Default status
@@ -20,7 +19,7 @@ export const storeOrder = async (req, res) => {
     await newOrder.save();
 
     // ✅ Add the order ID to the user's orders field
-    const user = await GeneralUser.findById(userId);
+    const user = await User.findById(_id);
     if (user) {
       user.cart = []; // Clear the cart
       user.orders.push(newOrder._id); // Add the order ID to the orders field
