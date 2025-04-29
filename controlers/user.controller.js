@@ -37,7 +37,6 @@ export const checkEmail = catchAsyncError(async (req, res, next) => {
 // Login general user controler(used by bot user and admin)
 export const loginGeneralUser = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({
       email,

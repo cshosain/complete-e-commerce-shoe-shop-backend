@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addCategoryRating,
   addReview,
   addShoe,
   deleteShoe,
@@ -28,6 +29,8 @@ router.post("/", authenticate, addShoe);
 // ✅ POST Route: Add a review to a specific shoe by ID (user only)
 router.post("/:id/review", isAuthenticated, addReview);
 
+// catagroy rating route
+router.post("/:id/category-rating", isAuthenticated, addCategoryRating);
 //delete a shoe (admin only)
 router.delete("/:id", authenticate, deleteShoe);
 

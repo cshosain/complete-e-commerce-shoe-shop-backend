@@ -124,10 +124,6 @@ export const getShoesWithFilteredAndPagination = async (req, res) => {
       filterQuery.availableColors = { $in: [req.query.color.toLowerCase()] };
     }
 
-    // if (req.query.size && req.query.size.toLowerCase() !== "all") {
-    //   filterQuery.availableSizes = { $in: [parseInt(req.query.size)] };
-    // }
-
     if (req.query.keyword) {
       filterQuery.title = { $regex: req.query.keyword, $options: "i" };
     }
@@ -140,7 +136,15 @@ export const getShoesWithFilteredAndPagination = async (req, res) => {
       };
     }
 
-    let shoes = await Shoe.find(filterQuery).limit(limit).skip(skip);
+    let shoes = await Shoe.find(filterQuery)
+      //unselect some fields from the response e.g. reviews, ratings.categoryRatings, ratings.averageCategoryRatings, ratings.noOfCategoryRatings
+      .populate("reviews.userName", "name img")
+      .select(
+        "-reviews -ratings.ratingsBreakdown -ratings.categoryRatings -ratings.averageCategoryRatings -ratings.noOfCategoryRatings"
+      )
+      .limit(limit)
+      .skip(skip);
+
     const totalItems = await Shoe.countDocuments(filterQuery);
     const totalPages = Math.ceil(totalItems / limit);
 
@@ -162,7 +166,9 @@ export const getShoesWithFilteredAndPagination = async (req, res) => {
 
 export const addReview = async (req, res) => {
   const { id } = req.params;
-  const { user, comment, rating } = req.body;
+  const userName = req.user.email; // Assuming req.user contains the authenticated user's info
+  const userImg = req.user.img || "https://example.com/user.jpg"; // Assuming req.user contains the authenticated user's info
+  const { comment, rating, images } = req.body;
 
   // Validate rating range
   if (rating < 1 || rating > 5) {
@@ -184,7 +190,7 @@ export const addReview = async (req, res) => {
 
     // Check if the user has already left a review
     const existingReview = shoe.reviews.find(
-      (review) => review.user.toString() === user
+      (review) => review.userName?.toString() === userName.toString()
     );
 
     if (existingReview) {
@@ -194,23 +200,19 @@ export const addReview = async (req, res) => {
       existingReview.date = new Date();
     } else {
       // Add a new review
-      const newReview = { user, comment, rating, date: new Date() };
+      const newReview = {
+        userName,
+        comment,
+        rating,
+        userImg,
+        images,
+        date: new Date(),
+      };
       shoe.reviews.push(newReview);
     }
 
-    // Calculate the new average rating
-    const totalRatings = shoe.reviews.reduce((sum, r) => sum + r.rating, 0);
-    const averageRating = totalRatings / shoe.reviews.length;
-
-    // Update ratings field in the database
-    shoe.ratings = {
-      average: averageRating.toFixed(1), // Round to 1 decimal place
-      total: shoe.reviews.length,
-    };
-
-    // Save updated shoe document
-    await shoe.save();
-
+    // Calculate the new average rating using schema function
+    await shoe.calculateAverageRating();
     res.status(200).json({
       success: true,
       message: existingReview
@@ -222,6 +224,37 @@ export const addReview = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to add review",
+      error: error.message,
+    });
+  }
+};
+
+export const addCategoryRating = async (req, res) => {
+  const { id } = req.params;
+  const userName = req.user.email; // Assuming req.user contains the authenticated user's info
+  const categoryRatings = req.body;
+
+  try {
+    // Find shoe by ID
+    const shoe = await Shoe.findById(id);
+    if (!shoe) {
+      return res.status(404).json({
+        success: false,
+        message: "Shoe not found",
+      });
+    }
+    // Update category ratings
+    await shoe.calculateCategoryRatings(userName, categoryRatings);
+
+    res.status(200).json({
+      success: true,
+      message: "Category ratings updated successfully!",
+      data: shoe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update category ratings",
       error: error.message,
     });
   }
