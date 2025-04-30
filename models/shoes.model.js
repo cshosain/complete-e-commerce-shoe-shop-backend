@@ -49,7 +49,7 @@ const shoeSchema = new mongoose.Schema(
     reviews: [
       {
         userName: { type: String, required: false },
-        UserImg: { type: String },
+        userImg: { type: String },
         rating: { type: Number, required: true, min: 1, max: 5 },
         comment: { type: String },
         images: [{ type: String }],
@@ -143,6 +143,8 @@ shoeSchema.methods.calculateCategoryRatings = async function (
     totalCategoryRatings.style / totalRatings;
   this.ratings.averageCategoryRatings.fit = this.ratings.noOfCategoryRatings =
     totalRatings;
+  this.ratings.averageCategoryRatings.valueForMoney =
+    totalCategoryRatings.valueForMoney / totalRatings;
 
   await this.save();
 };

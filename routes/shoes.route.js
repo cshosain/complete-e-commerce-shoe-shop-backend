@@ -5,6 +5,7 @@ import {
   addShoe,
   deleteShoe,
   getAllShoes,
+  getRatingsAndReviews,
   getShoeById,
   getShoesWithFilteredAndPagination,
   updateShoe,
@@ -36,5 +37,8 @@ router.delete("/:id", authenticate, deleteShoe);
 
 //update a shoe (admin only)
 router.put("/:id", authenticate, updateShoe);
+
+// Route to get only ratings and reviews of a shoe by ID
+router.get("/:id/ratings-reviews", getRatingsAndReviews);
 
 export default router;

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Shoe from "../models/shoes.model.js";
+import e from "express";
 
 // Helper function to format price range
 const formatPrice = (text) => {
@@ -196,14 +197,16 @@ export const addReview = async (req, res) => {
     if (existingReview) {
       // Update existing review
       existingReview.comment = comment;
-      existingReview.rating = rating;
+      existingReview.images = images;
+      existingReview.userImg = userImg;
+      existingReview.rating = Math.round(rating);
       existingReview.date = new Date();
     } else {
       // Add a new review
       const newReview = {
         userName,
         comment,
-        rating,
+        rating: Math.round(rating),
         userImg,
         images,
         date: new Date(),
@@ -255,6 +258,32 @@ export const addCategoryRating = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to update category ratings",
+      error: error.message,
+    });
+  }
+};
+
+// Get only ratings and reviews of a shoe by ID
+export const getRatingsAndReviews = async (req, res) => {
+  try {
+    const shoe = await Shoe.findById(req.params.id).select("ratings reviews");
+    if (!shoe) {
+      return res.status(404).json({
+        success: false,
+        message: "Shoe not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        ratings: shoe.ratings,
+        reviews: shoe.reviews,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve ratings and reviews",
       error: error.message,
     });
   }
