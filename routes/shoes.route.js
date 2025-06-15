@@ -25,7 +25,7 @@ router.get("/", getAllShoes);
 router.get("/:id", getShoeById);
 
 //add a shoe (admin only)
-router.post("/", authenticate, addShoe);
+router.post("/add", authenticate, addShoe);
 
 // ✅ POST Route: Add a review to a specific shoe by ID (user only)
 router.post("/:id/review", isAuthenticated, addReview);
@@ -36,7 +36,7 @@ router.post("/:id/category-rating", isAuthenticated, addCategoryRating);
 router.delete("/:id", authenticate, deleteShoe);
 
 //update a shoe (admin only)
-router.put("/:id", authenticate, updateShoe);
+router.put("/update/:id", authenticate, updateShoe);
 
 // Route to get only ratings and reviews of a shoe by ID
 router.get("/:id/ratings-reviews", getRatingsAndReviews);

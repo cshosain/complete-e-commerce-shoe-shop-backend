@@ -9,6 +9,9 @@ import {
   checkUsername,
   deleteAdmin,
   getAllAdmins,
+  getAllOrders,
+  updateOrderStatus,
+  softDeleteUser,
 } from "../controlers/admin.controler.js";
 import { cancelOrder } from "../controlers/order.controller.js";
 
@@ -30,7 +33,13 @@ router.get("/users/profile/:username", authenticate, adminProfile);
 router.get("/users", getAllAdmins);
 // Cancel an order (admin only)
 router.put("/orders/cancel/:orderId", authenticate, cancelOrder);
+// Update order status (admin only)
+router.put("/orders/status/:orderId", authenticate, updateOrderStatus);
+// Get all orders (admin only)
+router.get("/orders", authenticate, getAllOrders);
 // DELETE A USER BY ADMIN
 router.delete("/remove/:id", authenticate, deleteAdmin);
+// SOFT DELETE A USER BY ADMIN
+router.patch("/soft-remove/:id", authenticate, softDeleteUser);
 
 export default router;

@@ -50,6 +50,8 @@ const generalUserSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    is_active: { type: Boolean, default: true },
+    deleted_at: { type: Date, default: null },
   },
   { timestamps: true }
 );

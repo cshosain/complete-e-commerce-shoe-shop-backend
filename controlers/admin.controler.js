@@ -1,4 +1,6 @@
 import Admin from "../models/admin.model.js";
+import Order from "../models/order.model.js";
+import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
 //CONTROLER FUNC. FOR CHECK IF A USERNAME ALREADY EXIST OR NOT
@@ -23,7 +25,7 @@ export const checkUsername = async (req, res) => {
   }
 };
 
-// CONTROLER FOR CHECK EMAIL
+// CONTROLER FOR CHECK EMAIL AVAILABILITY
 export const checkEmail = async (req, res) => {
   try {
     const { email } = req.params;
@@ -58,7 +60,7 @@ export const adminSignup = async (req, res) => {
   }
 };
 
-// CONTROLER FOR USER LOGIN
+// CONTROLER FOR ADMIN LOGIN
 export const adminLogin = async (req, res) => {
   try {
     const username = req.body.username;
@@ -88,7 +90,7 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-// CONTROLER FOR USER PROFILE VIEW
+// CONTROLER FOR ADMIN PROFILE VIEW
 export const adminProfile = async (req, res) => {
   const username = req.params.username;
   const persistedUser = await Admin.findOne({ username });
@@ -105,7 +107,7 @@ export const getAllAdmins = async (req, res) => {
   }
 };
 
-//CONTROLER FOR DELETE A USER
+//CONTROLER FOR DELETE A ADMIN
 export const deleteAdmin = async (req, res) => {
   try {
     const id = req.params.id;
@@ -117,5 +119,64 @@ export const deleteAdmin = async (req, res) => {
     });
   } catch (err) {
     res.json({ success: false, message: err.message });
+  }
+};
+
+// Controller for getting all orders
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    res.status(200).json({ success: true, data: orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Controller for updating order status
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+    res.status(200).json({
+      success: true,
+      data: updatedOrder,
+      message: "Order status updated",
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Controller for soft deleting a user
+export const softDeleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { is_active: false, deleted_at: new Date() },
+      { new: true }
+    );
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found!" });
+    }
+    res.status(200).json({
+      success: true,
+      data: user,
+      message: "User soft deleted successfully!",
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };

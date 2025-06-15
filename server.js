@@ -12,7 +12,8 @@ import { errorMiddleware } from "./middlewares/error.js";
 
 dotenv.config(); // Load environment variables at the top
 
-const app = express();
+// Initialize Express app with a request body size limit
+const app = express({ limit: "10mb" });
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -22,9 +23,9 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(cookieParser({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }, { limit: "10mb" }));
 
 // ROUTES
 app.use("/api/user", userRoutes); // General Users

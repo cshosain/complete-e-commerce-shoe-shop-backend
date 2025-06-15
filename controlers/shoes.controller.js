@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Shoe from "../models/shoes.model.js";
-import e from "express";
 
 // Helper function to format price range
 const formatPrice = (text) => {
@@ -55,9 +54,27 @@ export const deleteShoe = async (req, res) => {
 //UPDATE A PRODUCT
 export const updateShoe = async (req, res) => {
   try {
+    const allowedFields = [
+      "img",
+      "title",
+      "prevPrice",
+      "newPrice",
+      "stock",
+      "brand",
+      "category",
+      "availableColors",
+      "availableSizes",
+    ];
+    const updateData = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+
     const updatedShoe = await Shoe.findByIdAndUpdate(
       req.params.id,
-      req.body, // Request body contains updated fields
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -65,7 +82,11 @@ export const updateShoe = async (req, res) => {
       return res.status(404).json({ message: "Shoe not found!" });
     }
 
-    res.status(200).json(updatedShoe);
+    res.status(200).json({
+      success: true,
+      message: "Shoe updated successfully!",
+      data: updatedShoe,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
