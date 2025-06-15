@@ -8,8 +8,16 @@ export const isAuthenticated = catchAsyncError(async (req, res, next) => {
   if (!token) {
     return next(new ErrorHandler("User is not authenticated.", 400));
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  } catch (error) {
+    return next(new ErrorHandler("Invalid or expired token.", 401));
+  }
   req.user = await User.findById(decoded.id);
+  if (!req.user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
   next();
 });
