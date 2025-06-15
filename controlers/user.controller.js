@@ -47,6 +47,14 @@ export const loginGeneralUser = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Invalid email or password." });
     }
+    // Check if user is active
+    if (user.is_active === false) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Your account is disabled for suspicious activity. Please contact admin@shoeshop.com.",
+      });
+    }
 
     const isPasswordMatched = await user.comparePassword(password);
     if (!isPasswordMatched) {
