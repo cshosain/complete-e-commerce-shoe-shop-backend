@@ -132,7 +132,7 @@ Designed for real-world use with modular architecture, advanced features, and pr
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/cshosain/react-admin-dashboard.git
+   git clone https://github.com/cshosain/complete-e-commerce-shoe-shop-backend.git
    ```
 
 2. **Install dependencies**
