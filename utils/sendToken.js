@@ -10,7 +10,7 @@ export const sendToken = (user, statusCode, message, res) => {
       ),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // true in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "None" for cross-origin in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "None" for cross-origin in production
     })
     .json({
       success: true,
