@@ -1,5 +1,7 @@
 export const sendToken = (user, statusCode, message, res) => {
-  const token = user.generateToken();
+  const token = user.generateToken ? user.generateToken() : user.token;
+  //remove password if present
+  if (user.password) delete user.password;
   res
     .status(statusCode)
     .cookie("token", token, {
