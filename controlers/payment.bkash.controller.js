@@ -15,6 +15,9 @@ class paymentController {
   };
 
   payment_create = async (req, res) => {
+    const apiUrlRoot =
+      "https://complete-e-commerce-shoe-shop-backend.onrender.com" ||
+      "http://localhost:3000";
     const { amount, userId } = req.body;
     globals.setValue("userId", userId);
     try {
@@ -23,7 +26,7 @@ class paymentController {
         {
           mode: "0011",
           payerReference: " ",
-          callbackURL: "http://localhost:3000/api/bkash/payment/callback",
+          callbackURL: `${apiUrlRoot}/api/bkash/payment/callback`,
           amount: amount,
           currency: "BDT",
           intent: "sale",
