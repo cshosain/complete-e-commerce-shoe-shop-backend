@@ -56,3 +56,14 @@ export const cancelOrder = async (req, res) => {
       .json({ message: "Failed to cancel order", error: error.message });
   }
 };
+
+// Get all orders for the authenticated user
+export const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch orders", error: error.message });
+  }
+};

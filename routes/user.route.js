@@ -16,7 +16,7 @@ import {
   verifyOTP,
 } from "../controlers/user.controller.js";
 
-import { storeOrder } from "../controlers/order.controller.js";
+import { storeOrder, getUserOrders } from "../controlers/order.controller.js";
 import { isAuthenticated } from "../middlewares/auth.user.js";
 
 const router = express.Router();
@@ -36,6 +36,9 @@ router.delete("/cart/remove/:cartId", isAuthenticated, removeCartItem);
 // Store an order (user only)
 router.post("/orders/store", isAuthenticated, storeOrder);
 
+// Get all orders for the authenticated user
+router.get("/orders", isAuthenticated, getUserOrders);
+
 // Update User Profile BY USER
 router.put("/update-profile", isAuthenticated, updateProfile);
 
@@ -48,5 +51,10 @@ router.get("/logout", isAuthenticated, logout);
 router.get("/me", isAuthenticated, getUser);
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
+
+// Simple route to check authentication status
+router.get("/auth/check", isAuthenticated, (req, res) => {
+  res.status(200).json({ success: true, message: "User is authenticated." });
+});
 
 export default router;
