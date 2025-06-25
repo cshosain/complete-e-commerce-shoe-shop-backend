@@ -273,9 +273,11 @@ export const resetPassword = async (req, res) => {
 export const logout = catchAsyncError(async (req, res, next) => {
   res
     .status(200)
-    .cookie("token", "", {
-      expires: new Date(Date.now()),
+    .clearCookie("token", {
       httpOnly: true,
+      sameSite: "none", // or "lax" if both frontend and backend are same-site
+      secure: true, // required for "none" in production (HTTPS)
+      path: "/",
     })
     .json({
       success: true,
