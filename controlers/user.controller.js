@@ -63,9 +63,8 @@ export const loginGeneralUser = async (req, res) => {
         .json({ success: false, message: "Invalid email or password." });
     }
     // Remove password field before sending user
-    const userObj = user.toObject();
-    delete userObj.password;
-    sendToken(userObj, 200, "User logged in successfully.", res);
+    user.password = undefined;
+    sendToken(user, 200, "User logged in successfully.", res);
   } catch (error) {
     res
       .status(500)

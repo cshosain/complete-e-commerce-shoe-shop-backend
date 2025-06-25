@@ -21,8 +21,8 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-    // secure: true, // 👈 Must be true in productionAdd commentMore actions
-    // sameSite: "None", // 👈 Must be 'None' for cross-origin
+    secure: process.env.NODE_ENV === "production", // true in production
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "None" for cross-origin in prod
   })
 );
 app.use(bodyParser.json({ limit: "10mb" }));
