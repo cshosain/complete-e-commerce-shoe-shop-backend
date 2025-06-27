@@ -4,6 +4,7 @@ import globals from "node-global-storage";
 import pkg from "node-global-storage";
 const { getValue, setValue } = pkg;
 import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
 dotenv.config();
 class paymentController {
   bkash_headers = async () => {
