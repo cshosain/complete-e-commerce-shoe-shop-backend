@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_PRODUCTION],
     credentials: true,
     secure: process.env.NODE_ENV === "production", // true in production
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "None" for cross-origin in prod

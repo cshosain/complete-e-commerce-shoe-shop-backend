@@ -4,6 +4,7 @@ import globals from "node-global-storage";
 import pkg from "node-global-storage";
 const { getValue, setValue } = pkg;
 import { v4 as uuidv4 } from "uuid";
+dotenv.config();
 class paymentController {
   bkash_headers = async () => {
     return {
@@ -47,7 +48,9 @@ class paymentController {
 
     if (status === "cancel" || status === "failure" || status !== "success") {
       console.log("failed status: ", status);
-      return res.redirect(`http://localhost:5173/error?message=${status}`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL_PRODUCTION}/error?message=${status}`
+      );
     }
     if (status === "success") {
       try {
@@ -68,16 +71,16 @@ class paymentController {
             amount: parseInt(data.amount),
           });
 
-          return res.redirect(`http://localhost:5173/success`);
+          return res.redirect(`${process.env.FRONTEND_URL_PRODUCTION}/success`);
         } else {
           return res.redirect(
-            `http://localhost:5173/error?message=${data.statusMessage}`
+            `${process.env.FRONTEND_URL_PRODUCTION}/error?message=${data.statusMessage}`
           );
         }
       } catch (error) {
         console.log(error);
         return res.redirect(
-          `http://localhost:5173/error?message=${error.message}`
+          `${process.env.FRONTEND_URL_PRODUCTION}/error?message=${error.message}`
         );
       }
     }
