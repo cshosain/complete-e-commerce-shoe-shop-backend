@@ -27,7 +27,7 @@ router.get("/check-email/:email", checkEmail);
 
 router.post("/signup", upload.single("avatar"), adminSignup);
 // image upload testing route
-router.post("/img-upload", upload.single("avatar"), handleImageUpload);
+//router.post("/img-upload", upload.single("avatar"), handleImageUpload);
 
 router.post("/login", adminLogin);
 
