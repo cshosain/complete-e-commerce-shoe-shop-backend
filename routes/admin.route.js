@@ -15,7 +15,7 @@ import {
 } from "../controlers/admin.controler.js";
 import { cancelOrder } from "../controlers/order.controller.js";
 import upload from "../middlewares/imageUpload.js";
-import { handleImageUpload } from "../utils/handleImageUpload.js";
+// import { handleImageUpload } from "../utils/handleImageUpload.js";
 
 const router = express.Router();
 
