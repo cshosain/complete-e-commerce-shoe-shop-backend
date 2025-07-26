@@ -48,8 +48,27 @@ export const checkEmail = async (req, res) => {
 
 // CONTROLER FOR ADMIN SIGNUP
 export const adminSignup = async (req, res) => {
+  // Check if a file was uploaded
+  let path, filename;
+  if (!req.file) {
+    path = "uploads\\1753552482789-no-avatar.jpeg";
+    filename = "1753552482789-no-avatar.jpeg";
+  } else {
+    path = req.file.path;
+    filename = req.file.filename;
+  }
+  if (!req.body.email || !req.body.username || !req.body.password) {
+    return res
+      .status(400)
+      .json({ message: "Email, username, and password are required" });
+  }
+  const avatar = { path, filename };
+  console.log("Avatar:", avatar);
   try {
-    const new_user = await Admin.create(req.body);
+    const new_user = await Admin.create({
+      ...req.body,
+      avatar,
+    });
     return res.status(200).json({
       success: true,
       data: new_user,

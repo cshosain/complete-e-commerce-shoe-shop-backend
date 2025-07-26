@@ -32,6 +32,16 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: false,
     },
+    avatar: {
+      path: {
+        type: String,
+        required: true,
+      },
+      filename: {
+        type: String,
+        required: true,
+      },
+    },
   },
   {
     timestamps: true,
