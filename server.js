@@ -22,7 +22,8 @@ app.use(
     origin: [
       process.env.FRONTEND_URL,
       process.env.FRONTEND_URL2,
-      process.env.FRONTEND_URL_PRODUCTION,
+      process.env.FRONTEND_URL_PRODUCTION_USER,
+      process.env.FRONTEND_URL_PRODUCTION_ADMIN,
     ],
     credentials: true,
     secure: process.env.NODE_ENV === "production", // true in production
