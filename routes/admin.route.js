@@ -14,6 +14,8 @@ import {
   softDeleteUser,
 } from "../controlers/admin.controler.js";
 import { cancelOrder } from "../controlers/order.controller.js";
+import upload from "../middlewares/imageUpload.js";
+import { handleImageUpload } from "../utils/handleImageUpload.js";
 
 const router = express.Router();
 
@@ -23,7 +25,9 @@ router.get("/check-username/:username", checkUsername);
 // Check if an email already exists
 router.get("/check-email/:email", checkEmail);
 
-router.post("/signup", adminSignup);
+router.post("/signup", upload.single("avatar"), adminSignup);
+// image upload testing route
+router.post("/img-upload", upload.single("avatar"), handleImageUpload);
 
 router.post("/login", adminLogin);
 
