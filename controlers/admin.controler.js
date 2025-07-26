@@ -54,6 +54,13 @@ export const adminSignup = async (req, res) => {
     path = "uploads\\1753552482789-no-avatar.jpeg";
     filename = "1753552482789-no-avatar.jpeg";
   } else {
+    //if file size is greater than 1MB, return error
+    if (req.file.size > 1024 * 1024) {
+      return res.status(400).json({
+        success: false,
+        message: "File size should be less than 1MB",
+      });
+    }
     path = req.file.path;
     filename = req.file.filename;
   }
@@ -63,7 +70,6 @@ export const adminSignup = async (req, res) => {
       .json({ message: "Email, username, and password are required" });
   }
   const avatar = { path, filename };
-  console.log("Avatar:", avatar);
   try {
     const new_user = await Admin.create({
       ...req.body,
@@ -89,9 +95,19 @@ export const adminLogin = async (req, res) => {
       if (foundUser.username === username && foundUser.password === password) {
         //generate token
         const token = jwt.sign({ username: foundUser.username }, "SECRETKEY");
+        // Build full avatar URL
+        const baseUrl =
+          process.env.BASE_URL ||
+          `http://localhost:${process.env.PORT || 3000}`;
+        const adminUser = foundUser.toObject();
+        adminUser.avatarUrl = `${baseUrl}/${adminUser.avatar.path.replace(
+          /\\/g,
+          "/"
+        )}`;
         res.status(200).json({
           success: true,
           token: token,
+          adminUser,
           message: "Admin authenticated",
         });
       } else {

@@ -19,7 +19,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_PRODUCTION],
+    origin: [
+      process.env.FRONTEND_URL,
+      process.env.FRONTEND_URL2,
+      process.env.FRONTEND_URL_PRODUCTION,
+    ],
     credentials: true,
     secure: process.env.NODE_ENV === "production", // true in production
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "None" for cross-origin in prod
@@ -28,6 +32,7 @@ app.use(
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(cookieParser({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }, { limit: "10mb" }));
+app.use("/uploads", express.static("uploads"));
 
 // ROUTES
 app.use("/api/user", userRoutes); // General Users
